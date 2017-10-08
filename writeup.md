@@ -1,4 +1,4 @@
-## Writeup Template
+## Writeup
 ### You can use this file as a template for your writeup if you want to submit it as a markdown file, but feel free to use some other method and submit a pdf if you prefer.
 
 ---
@@ -39,25 +39,25 @@ The goals / steps of this project are the following:
 
 The first line in the first cell contains the function get_hog_features, which computes the hog features.
 
-First, the features are computer for the entire test and train dataset. Then, they are computed frame by frame for the video.
+First, the features are computed for the entire test and train dataset. Then, they are computed frame by frame for the video.
 
-Before computing hog, I change the colorspace to HSV, which, as we saw in the latest project is useful for disregarding changes in luminance.
+Before computing hog, I change the colorspace to LUV, which, as we saw in the latest project is useful for disregarding changes in luminance.
 Even though hog is inherently more robust to different luminances, there is still value in having similar absolute values in classification.
-To choose HSV I tried different colorspaces looking for the highest validation accuracy
+To choose LUV I tried different colorspaces looking for the highest validation accuracy
 
 ![alt text][image2]
 
 ### #2. Explain how you settled on your final choice of HOG parameters.
 
-I tried various combinations of parameters and decided it was best to use all channels for the hog, even though with hsv you could also just use the S channel, using more channels discarded some false positives.
+I tried various combinations of parameters and decided it was best to use all channels for the hog, even though with hsv you could also just use the V channel, using more channels discarded some false positives.
 I kept the standard parameters for orientation, number of pixels per cell, etc.
 
 ### #3. Describe how (and identify where in your code) you trained a classifier using your selected HOG features (and color features if you used them).
 
 I trained a linear SVM with the following features:
--Histogram of gradients
--Raw pixel data (low resolution)
--Histogram of colors
+* Histogram of gradients
+* Raw pixel data (low resolution)
+* Histogram of colors
 
 The features are then stacked and scaled and fed into the classifier for training. This is done in line 65 (svc.fit(X_train, y_train))
 
@@ -77,7 +77,7 @@ First, here is an image of the detector
 
 ![alt text][image5]
 
-Now, the heatmap from this detection
+Now, the heatmap from this detection, with threshold >= 1 
 
 ![alt text][image6]
 
@@ -106,7 +106,7 @@ After this, I use label to create a bounding box along all contiguous parts of t
 
 ![alt text][image5]
 
-###  Here is the output of `scipy.ndimage.measurements.label()` on the integrated heatmap from all six frames:
+###  Here is the output of `scipy.ndimage.measurements.label()` on the integrated heatmap:
 ![alt text][image6]
 
 ###  Here the resulting bounding boxes are drawn onto the last frame in the series:
