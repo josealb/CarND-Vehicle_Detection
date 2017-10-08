@@ -1,5 +1,5 @@
-##Writeup Template
-###You can use this file as a template for your writeup if you want to submit it as a markdown file, but feel free to use some other method and submit a pdf if you prefer.
+## Writeup Template
+### You can use this file as a template for your writeup if you want to submit it as a markdown file, but feel free to use some other method and submit a pdf if you prefer.
 
 ---
 
@@ -25,18 +25,17 @@ The goals / steps of this project are the following:
 [image8]: ./media/video.png
 
 
-
 [video1]: ./project_video.mp4
 
 ## [Rubric](https://review.udacity.com/#!/rubrics/513/view) Points
-###Here I will consider the rubric points individually and describe how I addressed each point in my implementation.  
+### Here I will consider the rubric points individually and describe how I addressed each point in my implementation.  
 
 ---
-###Writeup / README
+### Writeup / README
 
-###Histogram of Oriented Gradients (HOG)
+### Histogram of Oriented Gradients (HOG)
 
-####1. Explain how (and identify where in your code) you extracted HOG features from the training images.
+### #1. Explain how (and identify where in your code) you extracted HOG features from the training images.
 
 The first line in the first cell contains the function get_hog_features, which computes the hog features.
 
@@ -48,12 +47,12 @@ To choose HSV I tried different colorspaces looking for the highest validation a
 
 ![alt text][image2]
 
-####2. Explain how you settled on your final choice of HOG parameters.
+### #2. Explain how you settled on your final choice of HOG parameters.
 
 I tried various combinations of parameters and decided it was best to use all channels for the hog, even though with hsv you could also just use the S channel, using more channels discarded some false positives.
 I kept the standard parameters for orientation, number of pixels per cell, etc.
 
-####3. Describe how (and identify where in your code) you trained a classifier using your selected HOG features (and color features if you used them).
+### #3. Describe how (and identify where in your code) you trained a classifier using your selected HOG features (and color features if you used them).
 
 I trained a linear SVM with the following features:
 -Histogram of gradients
@@ -62,13 +61,13 @@ I trained a linear SVM with the following features:
 
 The features are then stacked and scaled and fed into the classifier for training. This is done in line 65 (svc.fit(X_train, y_train))
 
-###Sliding Window Search
+### Sliding Window Search
 
-####1. Describe how (and identify where in your code) you implemented a sliding window search.  How did you decide what scales to search and how much to overlap windows?
+### #1. Describe how (and identify where in your code) you implemented a sliding window search.  How did you decide what scales to search and how much to overlap windows?
 
 I decided to search only the windows that contain the road, from pixel 400 downwards. This reduces execution time and the probability of false positives
 
-####2. Show some examples of test images to demonstrate how your pipeline is working.  What did you do to optimize the performance of your classifier?
+### #2. Show some examples of test images to demonstrate how your pipeline is working.  What did you do to optimize the performance of your classifier?
 
 The pipeline is as follows.
 
@@ -88,38 +87,38 @@ Finally, this is what the segmented image looks like
 
 ---
 
-### Video Implementation
+###  Video Implementation
 
-####1. Provide a link to your final video output.  Your pipeline should perform reasonably well on the entire project video (somewhat wobbly or unstable bounding boxes are ok as long as you are identifying the vehicles most of the time with minimal false positives.)
+### #1. Provide a link to your final video output.  Your pipeline should perform reasonably well on the entire project video (somewhat wobbly or unstable bounding boxes are ok as long as you are identifying the vehicles most of the time with minimal false positives.)
 
 Here's a video of the pipeline running
 
 [![alt text][image8]](https://youtu.be/BoBsp6tZ4Pg)
 
-####2. Describe how (and identify where in your code) you implemented some kind of filter for false positives and some method for combining overlapping bounding boxes.
+### #2. Describe how (and identify where in your code) you implemented some kind of filter for false positives and some method for combining overlapping bounding boxes.
 
 I recorded a heatmap class that increased the heat of the windows marked by the detector, but also implemented a decay term, that would reduce the heat of 
 the entire image every iteration.
 
 After this, I use label to create a bounding box along all contiguous parts of the image above a certain threshold.
 
-### Here are six frames and their corresponding heatmaps:
+###  Here is an example of the pipeline
 
 ![alt text][image5]
 
-### Here is the output of `scipy.ndimage.measurements.label()` on the integrated heatmap from all six frames:
+###  Here is the output of `scipy.ndimage.measurements.label()` on the integrated heatmap from all six frames:
 ![alt text][image6]
 
-### Here the resulting bounding boxes are drawn onto the last frame in the series:
+###  Here the resulting bounding boxes are drawn onto the last frame in the series:
 ![alt text][image7]
 
 
 
 ---
 
-###Discussion
+### Discussion
 
-####1. Briefly discuss any problems / issues you faced in your implementation of this project.  Where will your pipeline likely fail?  What could you do to make it more robust?
+### #1. Briefly discuss any problems / issues you faced in your implementation of this project.  Where will your pipeline likely fail?  What could you do to make it more robust?
 
 As I already mentioned in the Advanced Lane Finding project, this project shows the deficiencies of traditional computer vision vs end to end machine learning approaches.
 There are a lot of parameters that you can tune, and small functions that improve the result. But, without an objective loss function, it is difficult to know if you are moving in the right direction.
