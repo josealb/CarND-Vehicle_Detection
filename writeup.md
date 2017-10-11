@@ -72,53 +72,41 @@ For this reason I introduced a neural network. In the first step I only substitu
 
 On the second step I decided to let the network learn the best features and used a convolutional neural network. This approach significantly improved the accuracy of window detection to 99.7% up from 97% of the SVM
 
-The structure of the network is the following
+The structure of the network is the following:
 
-____________________________________________________________________________________________________
-Layer (type)                     Output Shape          Param #     Connected to                     
-====================================================================================================
-convolution2d_41 (Convolution2D) (None, 64, 64, 64)    1792        convolution2d_input_2[0][0]      
-____________________________________________________________________________________________________
-convolution2d_42 (Convolution2D) (None, 64, 64, 64)    36928       convolution2d_41[0][0]           
-____________________________________________________________________________________________________
-activation_50 (Activation)       (None, 64, 64, 64)    0           convolution2d_42[0][0]           
-____________________________________________________________________________________________________
-maxpooling2d_33 (MaxPooling2D)   (None, 32, 32, 64)    0           activation_50[0][0]              
-____________________________________________________________________________________________________
-convolution2d_43 (Convolution2D) (None, 32, 32, 128)   73856       maxpooling2d_33[0][0]            
-____________________________________________________________________________________________________
-activation_51 (Activation)       (None, 32, 32, 128)   0           convolution2d_43[0][0]           
-____________________________________________________________________________________________________
-maxpooling2d_34 (MaxPooling2D)   (None, 16, 16, 128)   0           activation_51[0][0]              
-____________________________________________________________________________________________________
-convolution2d_44 (Convolution2D) (None, 16, 16, 256)   295168      maxpooling2d_34[0][0]            
-____________________________________________________________________________________________________
-activation_52 (Activation)       (None, 16, 16, 256)   0           convolution2d_44[0][0]           
-____________________________________________________________________________________________________
-maxpooling2d_35 (MaxPooling2D)   (None, 8, 8, 256)     0           activation_52[0][0]              
-____________________________________________________________________________________________________
-convolution2d_45 (Convolution2D) (None, 8, 8, 512)     1180160     maxpooling2d_35[0][0]            
-____________________________________________________________________________________________________
-activation_53 (Activation)       (None, 8, 8, 512)     0           convolution2d_45[0][0]           
-____________________________________________________________________________________________________
-maxpooling2d_36 (MaxPooling2D)   (None, 4, 4, 512)     0           activation_53[0][0]              
-____________________________________________________________________________________________________
-flatten_10 (Flatten)             (None, 8192)          0           maxpooling2d_36[0][0]            
-____________________________________________________________________________________________________
-dense_35 (Dense)                 (None, 512)           4194816     flatten_10[0][0]                 
-____________________________________________________________________________________________________
-activation_54 (Activation)       (None, 512)           0           dense_35[0][0]                   
-____________________________________________________________________________________________________
-dense_36 (Dense)                 (None, 256)           131328      activation_54[0][0]              
-____________________________________________________________________________________________________
-activation_55 (Activation)       (None, 256)           0           dense_36[0][0]                   
-____________________________________________________________________________________________________
-dense_37 (Dense)                 (None, 128)           32896       activation_55[0][0]              
-____________________________________________________________________________________________________
-activation_56 (Activation)       (None, 128)           0           dense_37[0][0]                   
-____________________________________________________________________________________________________
-dense_38 (Dense)                 (None, 1)             129         activation_56[0][0]              
-====================================================================================================
+    convmodel.add(Conv2D(64, 3, 3,
+                border_mode='same',
+                input_shape=(64, 64, 3)))
+
+    convmodel.add(Conv2D(64,3,3,border_mode='same'))
+    convmodel.add(Activation('relu'))
+    convmodel.add(MaxPooling2D(pool_size=(2, 2)))
+
+    convmodel.add(Conv2D(128,3,3,border_mode='same'))
+    convmodel.add(Activation('relu'))
+    convmodel.add(MaxPooling2D(pool_size=(2, 2)))
+
+    convmodel.add(Conv2D(256,3,3,border_mode='same'))
+    convmodel.add(Activation('relu'))
+    convmodel.add(MaxPooling2D(pool_size=(2, 2)))
+
+    convmodel.add(Conv2D(512,3,3,border_mode='same'))
+    convmodel.add(Activation('relu'))
+    convmodel.add(MaxPooling2D(pool_size=(2, 2)))
+
+    convmodel.add(Flatten())
+
+    convmodel.add(Dense(512))
+    convmodel.add(Activation('relu'))
+
+    convmodel.add(Dense(256))
+    convmodel.add(Activation('relu'))
+
+    convmodel.add(Dense(128))
+    convmodel.add(Activation('relu'))
+
+    convmodel.add(Dense(1))
+    
 Total params: 5,947,073
 Trainable params: 5,947,073
 Non-trainable params: 0
