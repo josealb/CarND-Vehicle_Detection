@@ -1,9 +1,12 @@
 ## Writeup
-### You can use this file as a template for your writeup if you want to submit it as a markdown file, but feel free to use some other method and submit a pdf if you prefer.
+
 
 ---
 
 **Vehicle Detection Project**
+
+In this file I will explain the steps I took to solve the problem of detecting cars on a video stream. The first version of the project used HOGs and SVMs and was rejected by the reviewer for missing frames where the cars were visible.
+In this version, I switch to a convolutional neural network detection of the search window, which significantly improves accuracy, while reducing processing time.
 
 The goals / steps of this project are the following:
 
@@ -61,6 +64,66 @@ I trained a linear SVM with the following features:
 
 The features are then stacked and scaled and fed into the classifier for training. This is done in line 65 (svc.fit(X_train, y_train))
 
+### #3. As explained before, the method was changed to a convolutional neural network to improve the accuracy of the detection.
+
+HOGs and SVM didn't show enough accuracy and tuning the parameters proved very difficult and time consuming. Since they run only on cpu every iteration of parameter change and test takes a while.
+
+For this reason I introduced a neural network. In the first step I only substituted the SVM for a dense neural net, and kept extracing the same HOG and SVM features. This approach increased accuracy slightly, but not enough.
+
+On the second step I decided to let the network learn the best features and used a convolutional neural network. This approach significantly improved the accuracy of window detection to 99.7% up from 97% of the SVM
+
+The structure of the network is the following
+
+____________________________________________________________________________________________________
+Layer (type)                     Output Shape          Param #     Connected to                     
+====================================================================================================
+convolution2d_41 (Convolution2D) (None, 64, 64, 64)    1792        convolution2d_input_2[0][0]      
+____________________________________________________________________________________________________
+convolution2d_42 (Convolution2D) (None, 64, 64, 64)    36928       convolution2d_41[0][0]           
+____________________________________________________________________________________________________
+activation_50 (Activation)       (None, 64, 64, 64)    0           convolution2d_42[0][0]           
+____________________________________________________________________________________________________
+maxpooling2d_33 (MaxPooling2D)   (None, 32, 32, 64)    0           activation_50[0][0]              
+____________________________________________________________________________________________________
+convolution2d_43 (Convolution2D) (None, 32, 32, 128)   73856       maxpooling2d_33[0][0]            
+____________________________________________________________________________________________________
+activation_51 (Activation)       (None, 32, 32, 128)   0           convolution2d_43[0][0]           
+____________________________________________________________________________________________________
+maxpooling2d_34 (MaxPooling2D)   (None, 16, 16, 128)   0           activation_51[0][0]              
+____________________________________________________________________________________________________
+convolution2d_44 (Convolution2D) (None, 16, 16, 256)   295168      maxpooling2d_34[0][0]            
+____________________________________________________________________________________________________
+activation_52 (Activation)       (None, 16, 16, 256)   0           convolution2d_44[0][0]           
+____________________________________________________________________________________________________
+maxpooling2d_35 (MaxPooling2D)   (None, 8, 8, 256)     0           activation_52[0][0]              
+____________________________________________________________________________________________________
+convolution2d_45 (Convolution2D) (None, 8, 8, 512)     1180160     maxpooling2d_35[0][0]            
+____________________________________________________________________________________________________
+activation_53 (Activation)       (None, 8, 8, 512)     0           convolution2d_45[0][0]           
+____________________________________________________________________________________________________
+maxpooling2d_36 (MaxPooling2D)   (None, 4, 4, 512)     0           activation_53[0][0]              
+____________________________________________________________________________________________________
+flatten_10 (Flatten)             (None, 8192)          0           maxpooling2d_36[0][0]            
+____________________________________________________________________________________________________
+dense_35 (Dense)                 (None, 512)           4194816     flatten_10[0][0]                 
+____________________________________________________________________________________________________
+activation_54 (Activation)       (None, 512)           0           dense_35[0][0]                   
+____________________________________________________________________________________________________
+dense_36 (Dense)                 (None, 256)           131328      activation_54[0][0]              
+____________________________________________________________________________________________________
+activation_55 (Activation)       (None, 256)           0           dense_36[0][0]                   
+____________________________________________________________________________________________________
+dense_37 (Dense)                 (None, 128)           32896       activation_55[0][0]              
+____________________________________________________________________________________________________
+activation_56 (Activation)       (None, 128)           0           dense_37[0][0]                   
+____________________________________________________________________________________________________
+dense_38 (Dense)                 (None, 1)             129         activation_56[0][0]              
+====================================================================================================
+Total params: 5,947,073
+Trainable params: 5,947,073
+Non-trainable params: 0
+
+
 ### Sliding Window Search
 
 ### #1. Describe how (and identify where in your code) you implemented a sliding window search.  How did you decide what scales to search and how much to overlap windows?
@@ -93,7 +156,7 @@ Finally, this is what the segmented image looks like
 
 Here's a video of the pipeline running
 
-[![alt text][image8]](https://youtu.be/BoBsp6tZ4Pg)
+[![alt text][image8]](https://www.youtube.com/watch?v=ttnjMEQAHyg)
 
 ### #2. Describe how (and identify where in your code) you implemented some kind of filter for false positives and some method for combining overlapping bounding boxes.
 
@@ -127,4 +190,8 @@ and can move only in the right direction.
 On top of it, running this program on the CPU is slow, it can only use 25% of even the CPU since is not parallelized, an parallelizing it would likely take weeks.
 In contrast, and end to end deep learning approach runs on a massively parallel GPU
 
-Apart from this, the result are good enough to detect cars quite consistently. I think there is room for improvement on creating smartes search boxes and in a smarter filter for the classifier.
+For this reason, I ended up switching to convnets and getting significantly better results.
+
+A possible improvement for the project would be discarding the sliding window approach and substitute it for and end-to-end deep learning approach.
+
+Thank you for reading
